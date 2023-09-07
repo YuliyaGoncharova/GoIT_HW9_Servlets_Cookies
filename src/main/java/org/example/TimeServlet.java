@@ -17,18 +17,16 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+
 @WebServlet(value = "/time")
 public class TimeServlet extends HttpServlet {
     private TemplateEngine engine;
     @Override
     public void init() throws ServletException {
-        super.init();
-
         engine = new TemplateEngine();
-
         FileTemplateResolver resolver = new FileTemplateResolver();
-        resolver.setPrefix(getClass().getClassLoader().getResource("templates").getPath());
-        //       resolver.setPrefix("D:\\Desktop\\goit\\Developer\\hw_module_9\\templates\\");
+        resolver.setPrefix(Objects.requireNonNull(getClass().getClassLoader().getResource("templates")).getPath());
         resolver.setSuffix(".html");
         resolver.setTemplateMode("HTML5");
         resolver.setOrder(engine.getTemplateResolvers().size());
@@ -58,16 +56,16 @@ public class TimeServlet extends HttpServlet {
                 .format(DateTimeFormatter.ofPattern("yyyy-dd-MM HH:mm:ss")) + " " + timeZone;
     }
 
+
     private String isThereACookie(HttpServletRequest req) {
         Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
+        if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("lastTimezone")) {
                     return cookie.getValue();
                 }
             }
         }
-        return null;
-//
+        return "UTC";
     }
 }
